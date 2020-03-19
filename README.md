@@ -1,6 +1,6 @@
 govalidator
 ===========
-[![GoDoc](https://godoc.org/github.com/asaskevich/govalidator?status.png)](https://godoc.org/github.com/asaskevich/govalidator) [![Coverage Status](https://img.shields.io/coveralls/asaskevich/govalidator.svg)](https://coveralls.io/r/asaskevich/govalidator?branch=master) [![views](https://sourcegraph.com/api/repos/github.com/asaskevich/govalidator/.counters/views.png)](https://sourcegraph.com/github.com/asaskevich/govalidator)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/asaskevich/govalidator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![GoDoc](https://godoc.org/github.com/asaskevich/govalidator?status.png)](https://godoc.org/github.com/asaskevich/govalidator) [![Coverage Status](https://img.shields.io/coveralls/asaskevich/govalidator.svg)](https://coveralls.io/r/asaskevich/govalidator?branch=master) [![views](https://sourcegraph.com/api/repos/github.com/asaskevich/govalidator/.counters/views.png)](https://sourcegraph.com/github.com/asaskevich/govalidator)
 [![wercker status](https://app.wercker.com/status/1ec990b09ea86c910d5f08b0e02c6043/s "wercker status")](https://app.wercker.com/project/bykey/1ec990b09ea86c910d5f08b0e02c6043)
 [![Build Status](https://travis-ci.org/asaskevich/govalidator.svg?branch=master)](https://travis-ci.org/asaskevich/govalidator)
 
@@ -66,6 +66,7 @@ func IsMongoID(str string) bool
 func IsMultibyte(str string) bool
 func IsNull(str string) bool
 func IsNumeric(str string) bool
+func IsPrintableASCII(str string) bool
 func IsRGBcolor(str string) bool
 func IsRequestURI(rawurl string) bool
 func IsRequestURL(rawurl string) bool
@@ -95,6 +96,7 @@ func ToFloat(str string) (float64, error)
 func ToInt(str string) (int64, error)
 func ToString(obj interface{}) (string, error)
 func Trim(str, chars string) string
+func Truncate(str string, length int, ending string) string
 func UnderscoreToCamelCase(s string) string
 func ValidateStruct(s interface{}) (bool, error)
 func WhiteList(str, chars string) string
@@ -128,40 +130,48 @@ govalidator.TagMap["duck"] = govalidator.Validator(func(str string) bool {
 ```
 Here is a list of available validators for struct fields (validator - used function):
 ```go
-"email":         IsEmail,
-"url":           IsURL,
-"alpha":         IsAlpha,
-"alphanum":      IsAlphanumeric,
-"numeric":       IsNumeric,
-"hexadecimal":   IsHexadecimal,
-"hexcolor":      IsHexcolor,
-"rgbcolor":      IsRGBcolor,
-"lowercase":     IsLowerCase,
-"uppercase":     IsUpperCase,
-"int":           IsInt,
-"float":         IsFloat,
-"null":          IsNull,
-"uuid":          IsUUID,
-"uuidv3":        IsUUIDv3,
-"uuidv4":        IsUUIDv4,
-"uuidv5":        IsUUIDv5,
-"creditcard":    IsCreditCard,
-"isbn10":        IsISBN10,
-"isbn13":        IsISBN13,
-"json":          IsJSON,
-"multibyte":     IsMultibyte,
-"ascii":         IsASCII,
-"fullwidth":     IsFullWidth,
-"halfwidth":     IsHalfWidth,
-"variablewidth": IsVariableWidth,
-"base64":        IsBase64,
-"datauri":       IsDataURI,
-"ip":            IsIP,
-"ipv4":          IsIPv4,
-"ipv6":          IsIPv6,
-"mac":           IsMAC,
-"latitude":      IsLatitude,
-"longitude":     IsLongitude
+"email":          IsEmail,
+"url":            IsURL,
+"requrl":         IsRequestURL,
+"requri":         IsRequestURI,
+"alpha":          IsAlpha,
+"utfletter":      IsUTFLetter,
+"alphanum":       IsAlphanumeric,
+"utfletternum":   IsUTFLetterNumeric,
+"numeric":        IsNumeric,
+"utfnumeric":     IsUTFNumeric,
+"utfdigit":       IsUTFDigit,
+"hexadecimal":    IsHexadecimal,
+"hexcolor":       IsHexcolor,
+"rgbcolor":       IsRGBcolor,
+"lowercase":      IsLowerCase,
+"uppercase":      IsUpperCase,
+"int":            IsInt,
+"float":          IsFloat,
+"null":           IsNull,
+"uuid":           IsUUID,
+"uuidv3":         IsUUIDv3,
+"uuidv4":         IsUUIDv4,
+"uuidv5":         IsUUIDv5,
+"creditcard":     IsCreditCard,
+"isbn10":         IsISBN10,
+"isbn13":         IsISBN13,
+"json":           IsJSON,
+"multibyte":      IsMultibyte,
+"ascii":          IsASCII,
+"printableascii": IsPrintableASCII,
+"fullwidth":      IsFullWidth,
+"halfwidth":      IsHalfWidth,
+"variablewidth":  IsVariableWidth,
+"base64":         IsBase64,
+"datauri":        IsDataURI,
+"ip":             IsIP,
+"ipv4":           IsIPv4,
+"ipv6":           IsIPv6,
+"mac":            IsMAC,
+"latitude":       IsLatitude,
+"longitude":      IsLongitude,
+"ssn":            IsSSN
 ```
 And here is small example of usage:
 ```go

@@ -338,6 +338,14 @@ func IsASCII(str string) bool {
 	return rxASCII.MatchString(str)
 }
 
+// IsPrintableASCII check if the string contains printable ASCII chars only. Empty string is valid.
+func IsPrintableASCII(str string) bool {
+	if IsNull(str) {
+		return true
+	}
+	return rxPrintableASCII.MatchString(str)
+}
+
 // IsFullWidth check if the string contains any full-width chars. Empty string is valid.
 func IsFullWidth(str string) bool {
 	if IsNull(str) {
@@ -541,17 +549,20 @@ func typeCheck(v reflect.Value, t reflect.StructField) (bool, error) {
 	if !v.IsValid() {
 		return false, nil
 	}
+
+	tag := t.Tag.Get(tagName)
+
+	// Check if the field should be ignored
+	if tag == "-" || tag == "" {
+		return true, nil
+	}
+
 	switch v.Kind() {
 	case reflect.Bool,
 		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
 		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr,
 		reflect.Float32, reflect.Float64,
 		reflect.String:
-		tag := t.Tag.Get(tagName)
-		// Check if the field should be ignored
-		if tag == "-" || tag == "" {
-			return true, nil
-		}
 		options := parseTag(tag)
 		if options.contains("required") {
 			isNil := v.Interface() == nil
