@@ -839,31 +839,37 @@ func ValidateStruct(s interface{}) (bool, error) {
 				errs = append(errs, err)
 			}
 		}
-		resultField, err2 := typeCheck(valueField, typeField, val, nil)
-		if err2 != nil {
 
-			// Replace structure name with JSON name if there is a tag on the variable
-			jsonTag := toJSONName(typeField.Tag.Get("json"))
-			if jsonTag != "" {
-				switch jsonError := err2.(type) {
-				case Error:
-					jsonError.Name = jsonTag
-					err2 = jsonError
-				case Errors:
-					for i2, err3 := range jsonError {
-						switch customErr := err3.(type) {
-						case Error:
-							customErr.Name = jsonTag
-							jsonError[i2] = customErr
+		resultField := true
+		if typeField.Tag.Get(tagName) != "-" {
+			var err2 error
+			resultField, err2 = typeCheck(valueField, typeField, val, nil)
+			if err2 != nil {
+
+				// Replace structure name with JSON name if there is a tag on the variable
+				jsonTag := toJSONName(typeField.Tag.Get("json"))
+				if jsonTag != "" {
+					switch jsonError := err2.(type) {
+					case Error:
+						jsonError.Name = jsonTag
+						err2 = jsonError
+					case Errors:
+						for i2, err3 := range jsonError {
+							switch customErr := err3.(type) {
+							case Error:
+								customErr.Name = jsonTag
+								jsonError[i2] = customErr
+							}
 						}
+
+						err2 = jsonError
 					}
-
-					err2 = jsonError
 				}
-			}
 
-			errs = append(errs, err2)
+				errs = append(errs, err2)
+			}
 		}
+
 		result = result && resultField && structResult
 	}
 	if len(errs) > 0 {
@@ -1067,7 +1073,7 @@ func checkRequired(v reflect.Value, t reflect.StructField, options tagOptionsMap
 
 func typeCheck(v reflect.Value, t reflect.StructField, o reflect.Value, options tagOptionsMap) (isValid bool, resultErr error) {
 	if !v.IsValid() {
-		return false, nil
+		return false, Error{t.Name, fmt.Errorf("Field is not valid"), false, "valid", []string{}}
 	}
 
 	tag := t.Tag.Get(tagName)
